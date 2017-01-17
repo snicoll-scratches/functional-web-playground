@@ -16,10 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-import static org.springframework.web.reactive.function.server.RouterFunctions.toHttpHandler;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import static org.springframework.web.reactive.function.server.RouterFunctions.*;
 
 @SpringBootApplication(
 		exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, ReactiveWebAutoConfiguration.class})
@@ -48,15 +46,5 @@ public class WebFunctionPlaygroundApplication {
 	HttpHandler httpHandler(RouterFunction<?> router) {
 		return toHttpHandler(router);
 	}
-
-	/*
-	@Bean
-	HttpServer nettyServer(RouterFunction<?> router) {
-		HttpHandler handler = toHttpHandler(router);
-		HttpServer httpServer = HttpServer.create(7080);
-		httpServer.start(new ReactorHttpHandlerAdapter(handler));
-		return httpServer;
-	}
-	*/
 
 }

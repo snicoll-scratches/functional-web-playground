@@ -2,7 +2,6 @@ package com.example.functional.web;
 
 import com.example.functional.domain.User;
 import com.example.functional.domain.UserRepository;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
