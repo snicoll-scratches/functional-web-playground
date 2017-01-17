@@ -2,13 +2,12 @@ package com.example.functional.web;
 
 import com.example.functional.domain.User;
 import com.example.functional.domain.UserRepository;
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.ServerRequest;
-import org.springframework.web.reactive.function.ServerResponse;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Component
 public class UserHandler {
@@ -19,18 +18,20 @@ public class UserHandler {
 		this.repository = repository;
 	}
 
-	public ServerResponse<Publisher<User>> listPeople(ServerRequest request) {
+	public Mono<ServerResponse> listPeople(ServerRequest request) {
 		Flux<User> people = this.repository.findAll();
 		return ServerResponse.ok().body(people, User.class);
 	}
 
-	public ServerResponse<Publisher<User>> getUser(ServerRequest request) {
-		String personId = request.pathVariable("id");
-		Mono<User> person = this.repository.findOne(personId);
-		return ServerResponse.ok().body(person, User.class);
+	public Mono<ServerResponse> getUser(ServerRequest request) {
+		String userId = request.pathVariable("id");
+		Mono<ServerResponse> notFound = ServerResponse.notFound().build();
+		return this.repository.findOne(userId)
+				.then(user -> ServerResponse.ok().body(Mono.just(user), User.class))
+				.otherwiseIfEmpty(notFound);
 	}
 
-	public ServerResponse<Mono<Void>> createUser(ServerRequest request) {
+	public Mono<ServerResponse> createUser(ServerRequest request) {
 		Mono<User> user = request.bodyToMono(User.class);
 		return ServerResponse.ok().build(this.repository.save(user).then());
 	}
