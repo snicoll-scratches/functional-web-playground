@@ -24,9 +24,11 @@ public class UserHandler {
 	}
 
 	public Mono<ServerResponse> getUser(ServerRequest request) {
-		String personId = request.pathVariable("id");
-		Mono<User> person = this.repository.findOne(personId);
-		return ServerResponse.ok().body(person, User.class);
+		String userId = request.pathVariable("id");
+		Mono<ServerResponse> notFound = ServerResponse.notFound().build();
+		return this.repository.findOne(userId)
+				.then(user -> ServerResponse.ok().body(Mono.just(user), User.class))
+				.otherwiseIfEmpty(notFound);
 	}
 
 	public Mono<ServerResponse> createUser(ServerRequest request) {
