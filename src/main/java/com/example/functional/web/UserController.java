@@ -2,20 +2,33 @@ package com.example.functional.web;
 
 import com.example.functional.domain.User;
 import com.example.functional.domain.UserRepository;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.reactive.function.server.HandlerFunction;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-@Component
-public class UserHandler {
+@Controller
+public class UserController implements RouterFunction<ServerResponse> {
 
 	private final UserRepository repository;
 
-	public UserHandler(UserRepository repository) {
+	public UserController(UserRepository repository) {
 		this.repository = repository;
+	}
+
+	@Override
+	public Mono<HandlerFunction<ServerResponse>> route(ServerRequest request) {
+		return ((RouterFunction<ServerResponse>)RouterFunctions  // TODO Modify RouterFunctions and RouterFunction to avoid this explicit cast
+				.route(GET("/users"), this::listPeople)
+				.andRoute(GET("/users/{id}"), this::getUser)
+				.andRoute(POST("/users"), this::createUser)).route(request);
 	}
 
 	public Mono<ServerResponse> listPeople(ServerRequest request) {
