@@ -17,17 +17,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
-import static org.springframework.web.reactive.function.server.RouterFunctions.toHttpHandler;
+import static org.springframework.web.reactive.function.server.RouterFunctions.*;
 
-@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, ReactiveWebAutoConfiguration.class})
+@SpringBootApplication(
+		exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, ReactiveWebAutoConfiguration.class})
 public class WebFunctionPlaygroundApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebFunctionPlaygroundApplication.class, args);
 	}
 
+
 	@Bean
-	ApplicationRunner databaseInitialization(UserRepository userRepository) {
+	public ApplicationRunner databaseInitialization(UserRepository userRepository) {
 		return a -> userRepository.count()
 				.then(n -> n == 0 ? userRepository.save(new User("Stephane", "Nicoll")) : Mono.empty())
 				.block();
