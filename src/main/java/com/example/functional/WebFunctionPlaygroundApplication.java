@@ -12,8 +12,7 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication(
-		exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@SpringBootApplication
 public class WebFunctionPlaygroundApplication {
 
 	public static void main(String[] args) {
