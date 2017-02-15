@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Controller
-public class UserController implements RouterFunction<ServerResponse> {
+public class UserController  {
 
 	private final UserRepository repository;
 
@@ -23,13 +23,11 @@ public class UserController implements RouterFunction<ServerResponse> {
 		this.repository = repository;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Mono<HandlerFunction<ServerResponse>> route(ServerRequest request) {
-		return ((RouterFunction<ServerResponse>) RouterFunctions
+	public RouterFunction<ServerResponse> route() {
+		return RouterFunctions
 				.route(GET("/users"), this::listPeople)
 				.andRoute(GET("/users/{id}"), this::getUser)
-				.andRoute(POST("/users"), this::createUser)).route(request);
+				.andRoute(POST("/users"), this::createUser);
 	}
 
 	private Mono<ServerResponse> listPeople(ServerRequest request) {
