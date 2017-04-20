@@ -6,16 +6,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 
 @Controller
-public class UserController  {
+public class UserController {
 
 	private final UserRepository repository;
 
@@ -39,8 +39,8 @@ public class UserController  {
 		String userId = request.pathVariable("id");
 		Mono<ServerResponse> notFound = ServerResponse.notFound().build();
 		return this.repository.findOne(userId)
-				.then(user -> ServerResponse.ok().body(Mono.just(user), User.class))
-				.otherwiseIfEmpty(notFound);
+				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), User.class))
+				.switchIfEmpty(notFound);
 	}
 
 	private Mono<ServerResponse> createUser(ServerRequest request) {

@@ -4,16 +4,14 @@ package com.example.functional;
 import com.example.functional.domain.User;
 import com.example.functional.domain.UserRepository;
 import com.example.functional.web.UserController;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
 @SpringBootApplication
 public class WebFunctionPlaygroundApplication {
@@ -26,7 +24,7 @@ public class WebFunctionPlaygroundApplication {
 	@Bean
 	public ApplicationRunner databaseInitialization(UserRepository userRepository) {
 		return a -> userRepository.count()
-				.then(n -> n == 0 ? userRepository.save(new User("Stephane", "Nicoll")) : Mono.empty())
+				.flatMap(n -> n == 0 ? userRepository.save(new User("Stephane", "Nicoll")) : Mono.empty())
 				.block();
 	}
 
