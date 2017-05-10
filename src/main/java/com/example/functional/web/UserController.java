@@ -38,14 +38,14 @@ public class UserController {
 	private Mono<ServerResponse> getUser(ServerRequest request) {
 		String userId = request.pathVariable("id");
 		Mono<ServerResponse> notFound = ServerResponse.notFound().build();
-		return this.repository.findOne(userId)
+		return this.repository.findById(userId)
 				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), User.class))
 				.switchIfEmpty(notFound);
 	}
 
 	private Mono<ServerResponse> createUser(ServerRequest request) {
 		Mono<User> user = request.bodyToMono(User.class);
-		return ServerResponse.ok().build(this.repository.save(user).then());
+		return ServerResponse.ok().build(this.repository.saveAll(user).then());
 	}
 
 }
